@@ -1,0 +1,109 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const works = await getCollection('floral-works');
+const sorted = works.sort((a, b) => a.data.number.localeCompare(b.data.number));
+
+const phClasses = ['ph-1','ph-2','ph-3','ph-4','ph-5','ph-6'];
+---
+
+<Layout title="作品集 — MAISON">
+  <div class="filmstrip-page">
+    <!-- ── TOP INFO BAR ───────────────────────────────────────── -->
+    <div class="filmstrip-topbar">
+      <div class="filmstrip-topbar-col">
+        MAISON®<br />
+        STUDIO
+      </div>
+      <div class="filmstrip-topbar-col center">
+        フローリスト &amp; ボタニカルデザイナー<br />
+        独立系スタジオ &nbsp;|&nbsp; 2020年創業
+      </div>
+      <div class="filmstrip-topbar-col right">
+        EDITION / {String(sorted.length).padStart(2, '0')}<br />
+        作品
+      </div>
+    </div>
+
+    <!-- ── FILMSTRIP ──────────────────────────────────────────── -->
+    <div class="scroll-hint">← ドラッグしてスクロール →</div>
+
+    <div class="filmstrip" id="filmstrip">
+      {
+        sorted.map((work, i) => (
+          <a href={`/works/${work.slug}`} class="filmstrip-item">
+            {work.data.coverImage ? (
+              <img
+                src={work.data.coverImage}
+                alt={work.data.title}
+                loading={i < 3 ? 'eager' : 'lazy'}
+              />
+            ) : (
+              <div
+                class={`ph ${phClasses[i % phClasses.length]}`}
+                style="height:100%;"
+              />
+            )}
+            <span class="filmstrip-item-label">/{work.data.number}</span>
+          </a>
+        ))
+      }
+    </div>
+
+    <!-- ── BIG TYPE TAGLINE ───────────────────────────────────── -->
+    <div class="filmstrip-tagline">
+      <span class="filmstrip-tagline-count">
+        {String(sorted.length).padStart(2, '0')}
+      </span>
+      <h1>
+        all,&nbsp;<em>季節の、</em>あなたへ。
+      </h1>
+      <span class="filmstrip-page-num">
+        {String(new Date().getFullYear())}
+      </span>
+    </div>
+
+    <!-- ── WORKS LIST GRID ────────────────────────────────────── -->
+    <div class="works-list">
+      {
+        sorted.map((work, i) => (
+          <a href={`/works/${work.slug}`} class="work-list-item">
+            {work.data.coverImage ? (
+              <img src={work.data.coverImage} alt={work.data.title} loading="lazy" />
+            ) : (
+              <div class={`ph ${phClasses[i % phClasses.length]}`} />
+            )}
+            <div class="work-list-overlay" />
+            <div class="work-list-meta">
+              <span class="work-list-num">({work.data.number})</span>
+              <span class="work-list-title">{work.data.title}</span>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</Layout>
+
+<script>
+  const strip = document.getElementById('filmstrip');
+  if (strip) {
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+    strip.addEventListener('mousedown', (e) => {
+      isDown = true;
+      startX = e.pageX - strip.offsetLeft;
+      scrollLeft = strip.scrollLeft;
+    });
+    strip.addEventListener('mouseleave', () => { isDown = false; });
+    strip.addEventListener('mouseup', () => { isDown = false; });
+    strip.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - strip.offsetLeft;
+      strip.scrollLeft = scrollLeft - (x - startX) * 1.4;
+    });
+  }
+</script>

@@ -1,0 +1,97 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getEntry } from 'astro:content';
+
+const page = await getEntry('pages', 'about');
+const { address, hours, phone, email } = page.data;
+---
+
+<Layout
+  title="お問い合わせ — MAISON"
+  description="MAISONフローラルデザインスタジオへのご依頼・お問い合わせ"
+>
+  <div class="contact-page">
+
+    <!-- ── LEFT: BIG TYPE ──────────────────────────────────────── -->
+    <div class="contact-left">
+      <span class="contact-eyebrow">お問い合わせ &nbsp;/&nbsp; X.0204</span>
+      <h1 class="contact-title">
+        プロジェクトを<br />
+        <span
+          style="
+            font-family: var(--font-serif);
+            font-weight: 400;
+            font-style: italic;
+          "
+        >はじめる</span>
+      </h1>
+      <p class="contact-subtitle">
+        すべての依頼は、時間についての会話から始まる——
+        一年のうちのいつか、光の質、その瞬間のこと。
+      </p>
+    </div>
+
+    <!-- ── RIGHT: CONTACT INFO ─────────────────────────────────── -->
+    <div class="contact-right">
+
+      {email && (
+        <div class="contact-field">
+          <span class="contact-field-label">メール</span>
+          <span class="contact-field-value">
+            <a href={`mailto:${email}`}>{email}</a>
+          </span>
+        </div>
+      )}
+
+      {phone && (
+        <div class="contact-field">
+          <span class="contact-field-label">電話</span>
+          <span class="contact-field-value">{phone}</span>
+        </div>
+      )}
+
+      {address && (
+        <div class="contact-field">
+          <span class="contact-field-label">スタジオ</span>
+          <span class="contact-field-value">{address}</span>
+        </div>
+      )}
+
+      {hours && (
+        <div class="contact-field">
+          <span class="contact-field-label">営業時間</span>
+          <span class="contact-field-value">{hours}</span>
+        </div>
+      )}
+
+      <div class="contact-field">
+        <span class="contact-field-label">ご依頼について</span>
+        <span
+          class="contact-field-value"
+          style="font-family: var(--font-serif); font-style: italic; font-size: 0.88rem; line-height: 2; color: var(--gray-700);"
+        >
+          オーダーメイドのアレンジメント、イベントインスタレーション、<br />
+          エディトリアル、スペース装飾。<br />
+          どんな規模のご依頼もお気軽にご相談ください。
+        </span>
+      </div>
+
+      <div
+        style="
+          margin-top: auto;
+          padding-top: 3rem;
+          display: flex;
+          gap: 2rem;
+        "
+      >
+        <span style="font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.1em; color: var(--gray-500);">
+          [002%]
+        </span>
+        <span style="font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.1em; color: var(--gray-500);">
+          35.6762° N 139.6503° E
+        </span>
+      </div>
+
+    </div>
+  </div>
+</Layout>

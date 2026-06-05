@@ -1,0 +1,232 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const works = await getCollection('floral-works');
+  return works.map((work) => ({
+    params: { slug: work.slug },
+    props: { work },
+  }));
+}
+
+const { work } = Astro.props;
+const { Content } = await work.render();
+
+const all = await getCollection('floral-works');
+const sorted = all.sort((a, b) => a.data.number.localeCompare(b.data.number));
+const currentIdx = sorted.findIndex((w) => w.slug === work.slug);
+const prev = currentIdx > 0 ? sorted[currentIdx - 1] : null;
+const next = currentIdx < sorted.length - 1 ? sorted[currentIdx + 1] : null;
+
+const phClasses = ['ph-1','ph-2','ph-3','ph-4','ph-5','ph-6'];
+const phIdx = parseInt(work.data.number, 10) - 1;
+
+function statusLabel(s: string) {
+  const map: Record<string, string> = {
+    seasonal: '[季節限定]',
+    available: '[受注可能]',
+    'sold-out': '[完売]',
+    preview: '[近日公開]',
+  };
+  return map[s] ?? s.toUpperCase();
+}
+---
+
+<Layout
+  title={`${work.data.title} — MAISON`}
+  description={work.data.concept ?? work.data.subtitle ?? ''}
+>
+  <div class="detail-page">
+
+    <!-- ── PORTRAIT-HERO TITLE ────────────────────────────────── -->
+    <div
+      style="
+        padding: 5rem 2rem 3rem;
+        display: grid;
+        grid-template-columns: 3rem 1fr;
+        gap: 2rem;
+        align-items: end;
+        border-bottom: 1px solid #000;
+        min-height: 40vh;
+      "
+    >
+      <div
+        style="
+          writing-mode: vertical-rl;
+          transform: rotate(180deg);
+          font-family: var(--font-mono);
+          font-size: 0.58rem;
+          letter-spacing: 0.12em;
+          color: var(--gray-500);
+          text-transform: uppercase;
+          align-self: flex-end;
+        "
+      >
+        {String(currentIdx + 1).padStart(2, '0')}/{String(sorted.length).padStart(2, '0')}
+      </div>
+
+      <div>
+        <span class="detail-number">NO.{work.data.number} &nbsp;/&nbsp; フローラル作品</span>
+        <h1 class="detail-title">{work.data.title}</h1>
+        {work.data.subtitle && (
+          <p
+            style="
+              font-family: var(--font-serif);
+              font-style: italic;
+              font-size: 1.05rem;
+              color: var(--gray-500);
+              margin-top: 1rem;
+            "
+          >
+            {work.data.subtitle}
+          </p>
+        )}
+      </div>
+    </div>
+
+    <!-- ── META + DESCRIPTION ────────────────────────────────── -->
+    <div class="detail-header">
+      <div class="detail-meta">
+        <div class="detail-meta-item">
+          <span class="detail-meta-label">使用花材</span>
+          <span class="detail-meta-value">{work.data.florals ?? '—'}</span>
+        </div>
+        <div class="detail-meta-item">
+          <span class="detail-meta-label">ステータス</span>
+          <span class="detail-meta-value"
+            style="font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em;"
+          >{statusLabel(work.data.status)}</span>
+        </div>
+        {work.data.date && (
+          <div class="detail-meta-item">
+            <span class="detail-meta-label">シーズン</span>
+            <span class="detail-meta-value">{work.data.date}</span>
+          </div>
+        )}
+        <div class="detail-meta-item">
+          <span class="detail-meta-label">作品番号</span>
+          <span class="detail-meta-value"
+            style="font-family: var(--font-mono); font-size: 0.75rem;"
+          >X.{work.data.number.padStart(4,'0')}</span>
+        </div>
+      </div>
+
+      <div>
+        {work.data.concept && (
+          <div style="margin-bottom: 2rem;">
+            <span class="detail-meta-label">コンセプト</span>
+            <p
+              style="
+                font-family: var(--font-serif);
+                font-size: 0.92rem;
+                line-height: 2;
+                color: var(--gray-700);
+              "
+            >
+              {work.data.concept}
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+
+    <!-- ── IMAGES ─────────────────────────────────────────────── -->
+    <div class="detail-images">
+      <div class="detail-image-wrap" style="aspect-ratio: 4/5;">
+        {work.data.coverImage ? (
+          <img src={work.data.coverImage} alt={work.data.title} loading="eager" />
+        ) : (
+          <div class={`ph ${phClasses[phIdx % phClasses.length]}`} style="width:100%;height:100%;" />
+        )}
+        <span class="detail-image-label">(01)</span>
+      </div>
+
+      {work.data.gallery && work.data.gallery.length > 0 ? (
+        work.data.gallery.slice(0, 3).map((img, i) => (
+          <div class="detail-image-wrap" style="aspect-ratio: 4/5;">
+            <img src={img} alt={`${work.data.title} — 詳細 ${i + 2}`} loading="lazy" />
+            <span class="detail-image-label">({String(i + 2).padStart(2,'0')})</span>
+          </div>
+        ))
+      ) : (
+        <div class="detail-image-wrap" style="aspect-ratio: 4/5;">
+          <div class={`ph ${phClasses[(phIdx + 1) % phClasses.length]}`} style="width:100%;height:100%;" />
+          <span class="detail-image-label">(02)</span>
+        </div>
+      )}
+    </div>
+
+    <!-- ── CONCEPT BODY ───────────────────────────────────────── -->
+    <div class="detail-concept">
+      <span class="detail-concept-label">制作ノート</span>
+      <div class="detail-concept-body">
+        <Content />
+      </div>
+    </div>
+
+    <!-- ── PREV / NEXT ─────────────────────────────────────────── -->
+    <nav
+      style="
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        border-top: 1px solid #000;
+      "
+    >
+      {prev ? (
+        <a
+          href={`/works/${prev.slug}`}
+          style="
+            padding: 1.5rem 2rem;
+            border-right: 1px solid #000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+          "
+        >
+          <span style="font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.1em; color: var(--gray-500);">
+            ← 前の作品
+          </span>
+          <span style="font-family: var(--font-serif); font-style: italic;">{prev.data.title}</span>
+        </a>
+      ) : <div />}
+
+      {next ? (
+        <a
+          href={`/works/${next.slug}`}
+          style="
+            padding: 1.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            align-items: flex-end;
+            text-align: right;
+          "
+        >
+          <span style="font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.1em; color: var(--gray-500);">
+            次の作品 →
+          </span>
+          <span style="font-family: var(--font-serif); font-style: italic;">{next.data.title}</span>
+        </a>
+      ) : <div />}
+    </nav>
+
+    <!-- ── COORD DECORATION ───────────────────────────────────── -->
+    <div
+      style="
+        padding: 0.8rem 2rem;
+        border-top: 1px solid var(--gray-200);
+        display: flex;
+        justify-content: space-between;
+      "
+    >
+      <span style="font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.1em; color: var(--gray-500);">
+        X.{work.data.number.padStart(4,'0')} Y.0113
+      </span>
+      <span style="font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.1em; color: var(--gray-500);">
+        [{statusLabel(work.data.status)}]
+      </span>
+    </div>
+
+  </div>
+</Layout>

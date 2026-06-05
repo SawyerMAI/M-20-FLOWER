@@ -1,0 +1,146 @@
+# ── Decap CMS Configuration ────────────────────────────────────
+# Replace YOUR-USERNAME/YOUR-REPO with your actual GitHub repository.
+
+backend:
+  name: github
+  repo: YOUR-USERNAME/YOUR-REPO
+  branch: main
+
+# Media library — all uploads go here
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
+
+# ── Collections ────────────────────────────────────────────────
+collections:
+
+  # ── 花卉作品集 (Floral Works) ──────────────────────────────────
+  - name: "floral-works"
+    label: "Floral Works 花卉作品"
+    label_singular: "Work"
+    folder: "src/content/floral-works"
+    create: true
+    slug: "{{number}}-{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    sortable_fields: ["number", "date", "title"]
+    summary: "{{number}} — {{title}} [{{status}}]"
+    fields:
+      - label: "作品名称 Title"
+        name: "title"
+        widget: "string"
+        hint: "主标题，如「Spring Echo」"
+
+      - label: "英文副标题 Subtitle"
+        name: "subtitle"
+        widget: "string"
+        required: false
+        hint: "副标题/英文说明，如「A Whisper of New Beginnings」"
+
+      - label: "项目编号 Number"
+        name: "number"
+        widget: "string"
+        hint: "三位数编号，如「001」、「002」"
+        pattern: ["^[0-9]{3}$", "Must be a 3-digit number, e.g. 001"]
+
+      - label: "封面大图 Cover Image"
+        name: "coverImage"
+        widget: "image"
+        required: false
+        hint: "建议比例 3:4，高清大图"
+
+      - label: "细节图库 Gallery"
+        name: "gallery"
+        widget: "list"
+        required: false
+        field:
+          label: "Image"
+          name: "image"
+          widget: "image"
+        hint: "可上传多张细节图，会在作品详情页展示"
+
+      - label: "花材介绍 Florals"
+        name: "florals"
+        widget: "string"
+        required: false
+        hint: "所用花材，逗号分隔，如「Ranunculus, Anemone, Baby's Breath」"
+
+      - label: "设计概念 Concept"
+        name: "concept"
+        widget: "text"
+        required: false
+        hint: "一句话概念说明，显示在作品详情页右侧"
+
+      - label: "设计理念正文 Body (Markdown)"
+        name: "body"
+        widget: "markdown"
+        hint: "完整的设计理念，支持 Markdown 格式。会渲染为诗意的正文。"
+
+      - label: "状态标签 Status"
+        name: "status"
+        widget: "select"
+        options:
+          - { label: "当季 Seasonal", value: "seasonal" }
+          - { label: "可预订 Available", value: "available" }
+          - { label: "已售出 Sold Out", value: "sold-out" }
+          - { label: "预告 Preview", value: "preview" }
+        default: "available"
+
+      - label: "首页推荐 Featured"
+        name: "featured"
+        widget: "boolean"
+        default: false
+        hint: "开启后显示在首页网格"
+
+      - label: "日期 Date"
+        name: "date"
+        widget: "string"
+        required: false
+        hint: "年月，如「2026-04」"
+
+  # ── 页面管理 (Pages) ───────────────────────────────────────────
+  - name: "pages"
+    label: "Pages 页面管理"
+    label_singular: "Page"
+    folder: "src/content/pages"
+    create: false
+    extension: "md"
+    format: "frontmatter"
+    fields:
+      - label: "页面标题 Title"
+        name: "title"
+        widget: "string"
+
+      - label: "副标题 Subtitle"
+        name: "subtitle"
+        widget: "string"
+        required: false
+
+      - label: "主视觉图 Hero Image"
+        name: "heroImage"
+        widget: "image"
+        required: false
+
+      - label: "地址 Address"
+        name: "address"
+        widget: "text"
+        required: false
+
+      - label: "营业时间 Hours"
+        name: "hours"
+        widget: "text"
+        required: false
+
+      - label: "电话 Phone"
+        name: "phone"
+        widget: "string"
+        required: false
+
+      - label: "邮箱 Email"
+        name: "email"
+        widget: "string"
+        required: false
+
+      - label: "正文 Body"
+        name: "body"
+        widget: "markdown"
+        required: false

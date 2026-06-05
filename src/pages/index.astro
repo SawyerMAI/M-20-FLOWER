@@ -1,0 +1,164 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const works = await getCollection('floral-works');
+const featured = works
+  .filter((w) => w.data.featured)
+  .sort((a, b) => a.data.number.localeCompare(b.data.number))
+  .slice(0, 8);
+
+const phClasses = ['ph-1','ph-2','ph-3','ph-4','ph-5','ph-6','ph-1','ph-2'];
+
+function statusLabel(s: string) {
+  const map: Record<string, string> = {
+    seasonal: '[季節限定]',
+    available: '[受注可]',
+    'sold-out': '[完売]',
+    preview: '[近日公開]',
+  };
+  return map[s] ?? '';
+}
+---
+
+<Layout title="MAISON — フローラルデザインスタジオ">
+  <!-- ── HERO ─────────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero-bg-text" aria-hidden="true">MAISON</div>
+    <div class="hero-content">
+      <span class="hero-number">NO.0001 &nbsp;/&nbsp; スタジオ</span>
+      <p class="hero-title">
+        花という言語に根ざした、<br />
+        独立系フローラル<br />
+        <em>デザインアトリエ。</em>
+      </p>
+    </div>
+  </section>
+
+  <!-- ── WORKS PREVIEW ─────────────────────────────────────────── -->
+  <section>
+    <div class="section-bar">
+      <span class="section-label">フローラル・ディレクション</span>
+      <span class="section-center">季節のキュレーテッド・アレンジメント</span>
+      <a href="/works" class="section-more">[+] 全作品を見る</a>
+    </div>
+
+    <div class="works-grid">
+      {
+        featured.map((work, i) => (
+          <a href={`/works/${work.slug}`} class="work-card">
+            {work.data.coverImage ? (
+              <img
+                src={work.data.coverImage}
+                alt={work.data.title}
+                loading={i < 4 ? 'eager' : 'lazy'}
+              />
+            ) : (
+              <div class={`ph ${phClasses[i % phClasses.length]}`} />
+            )}
+            <span class="work-card-num">({work.data.number})</span>
+            {work.data.status !== 'available' && (
+              <span class="work-card-status">{statusLabel(work.data.status)}</span>
+            )}
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- ── INTRO STRIP ───────────────────────────────────────────── -->
+  <section
+    style="
+      padding: 6rem 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      border-top: 1px solid #000;
+    "
+  >
+    <div>
+      <span
+        style="
+          display: block;
+          font-family: var(--font-mono);
+          font-size: 0.58rem;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: var(--gray-500);
+          margin-bottom: 1.5rem;
+        "
+      >制作について &nbsp;/&nbsp; X.0204</span>
+      <h2
+        style="
+          font-family: var(--font-display);
+          font-size: clamp(2.5rem, 5vw, 5.5rem);
+          font-weight: 900;
+          letter-spacing: -0.03em;
+          line-height: 1;
+        "
+      >
+        沈黙とともに、<br />
+        <span style="font-family: var(--font-serif); font-weight: 400; font-style: italic;">
+          デザインする。
+        </span>
+      </h2>
+    </div>
+    <div style="display: flex; flex-direction: column; justify-content: flex-end;">
+      <p
+        style="
+          font-family: var(--font-serif);
+          font-size: 0.88rem;
+          line-height: 2.1;
+          color: var(--gray-700);
+          margin-bottom: 2rem;
+        "
+      >
+        私たちは花を使ってデザインするとき、詩人が沈黙を扱うのと同じ方法を取る——
+        言葉を取り囲むものが、言葉そのものと同じくらい重要なのだ。
+        MAISONは独立系フローラルデザインスタジオとして、季節のアレンジメント、
+        インスタレーション、そしてオーダーメイドの制作を手がけている。
+      </p>
+      <a
+        href="/about"
+        style="
+          font-family: var(--font-mono);
+          font-size: 0.62rem;
+          letter-spacing: 0.12em;
+          border-bottom: 1px solid #000;
+          padding-bottom: 0.25rem;
+          align-self: flex-start;
+        "
+      >続きを読む →</a>
+    </div>
+  </section>
+
+  <!-- ── DECORATIVE COORDS ─────────────────────────────────────── -->
+  <div
+    style="
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid var(--gray-200);
+    "
+  >
+    <span style="font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.1em; color: var(--gray-500);">
+      X.0204 Y.0113
+    </span>
+    <span style="font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.1em; color: var(--gray-500);">
+      [002%] &nbsp; 35.6762° N 139.6503° E
+    </span>
+  </div>
+</Layout>
+
+<style>
+  @media (max-width: 640px) {
+    .works-grid {
+      overflow-x: auto;
+      grid-template-columns: repeat(8, 70vw);
+      grid-template-rows: 1fr;
+      scrollbar-width: none;
+    }
+    .works-grid::-webkit-scrollbar { display: none; }
+    .work-card { aspect-ratio: 3/4; }
+  }
+</style>

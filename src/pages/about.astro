@@ -1,0 +1,119 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getEntry } from 'astro:content';
+
+const page = await getEntry('pages', 'about');
+const { Content } = await page.render();
+const { title, subtitle, address, hours, phone, email } = page.data;
+---
+
+<Layout title="スタジオについて — MAISON" description={subtitle}>
+  <div class="editorial-page">
+
+    <!-- ── MASTHEAD ───────────────────────────────────────────── -->
+    <div class="editorial-masthead">
+      <div>
+        <span class="editorial-running-num">01/01 &nbsp;/&nbsp; スタジオについて</span>
+        <h1 class="editorial-title">
+          {title}<br />
+          <em>Florale</em>
+        </h1>
+      </div>
+
+      <div class="editorial-intro-col">
+        <p>
+          私たちは花を使ってデザインするとき、詩人が沈黙を扱うのと同じ方法を取る——
+          言葉を取り囲むものが、言葉そのものと同じくらい重要なのだ。
+        </p>
+        <p>
+          MAISONは独立系フローラルデザインスタジオ。季節のアレンジメント、インスタレーション、
+          そしてオーダーメイドの制作を行う——一本の茎を意図を持って置くことが、
+          騒がしい部屋よりも多くの意味を持ちうると理解している人のために。
+        </p>
+        <blockquote class="editorial-quote">
+          「愛よりも深い愛とともに、<br />私たちは生きた。」
+        </blockquote>
+      </div>
+    </div>
+
+    <!-- ── BODY + PHOTO GRID ──────────────────────────────────── -->
+    <div class="editorial-body-section">
+      <div class="editorial-body-text">
+        <Content />
+      </div>
+
+      <div>
+        <div class="editorial-photo-grid">
+          <div class="editorial-photo-item" style="aspect-ratio: 16/9;">
+            <div class="ph ph-1" style="width:100%;height:100%;" />
+          </div>
+          <div class="editorial-photo-item">
+            <div class="ph ph-2" style="width:100%;height:100%;" />
+          </div>
+          <div class="editorial-photo-item">
+            <div class="ph ph-3" style="width:100%;height:100%;" />
+          </div>
+          <div class="editorial-photo-item">
+            <div class="ph ph-4" style="width:100%;height:100%;" />
+          </div>
+          <div class="editorial-photo-item">
+            <div class="ph ph-5" style="width:100%;height:100%;" />
+          </div>
+        </div>
+
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            gap: 2px;
+            margin-top: 4px;
+          "
+        >
+          <span class="editorial-photo-caption">スタジオ内部 — 個人写真</span>
+          <span class="editorial-photo-caption">無題 — 真夜中の開花 シリーズ</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STUDIO INFO ─────────────────────────────────────────── -->
+    <div class="studio-info">
+      {address && (
+        <div class="studio-info-block">
+          <span class="studio-info-label">所在地</span>
+          <span class="studio-info-value">{address}</span>
+        </div>
+      )}
+      {hours && (
+        <div class="studio-info-block">
+          <span class="studio-info-label">営業時間</span>
+          <span class="studio-info-value">{hours}</span>
+        </div>
+      )}
+      <div class="studio-info-block">
+        <span class="studio-info-label">連絡先</span>
+        <span class="studio-info-value">
+          {phone && <>{phone}<br /></>}
+          {email && <a href={`mailto:${email}`}>{email}</a>}
+        </span>
+      </div>
+    </div>
+
+    <!-- ── DECORATIVE ─────────────────────────────────────────── -->
+    <div
+      style="
+        padding: 0.8rem 2rem;
+        border-top: 1px solid var(--gray-200);
+        display: flex;
+        justify-content: space-between;
+      "
+    >
+      <span style="font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.1em; color: var(--gray-500);">
+        X.0204 Y.0113
+      </span>
+      <span style="font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.1em; color: var(--gray-500);">
+        内なる静けさ
+      </span>
+    </div>
+
+  </div>
+</Layout>
