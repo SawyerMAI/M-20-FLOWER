@@ -54,7 +54,19 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
           <a href={`${base}/contact`} aria-current={currentPath === `${base}/contact` ? 'page' : undefined}>お問い合わせ</a>
         </li>
       </ul>
+      <button class="nav-menu-btn" aria-label="メニューを開く" aria-expanded="false">☰</button>
     </nav>
+
+    <div class="nav-overlay" aria-hidden="true">
+      <button class="nav-overlay-close" aria-label="メニューを閉じる">✕</button>
+      <ul class="nav-overlay-links">
+        <li><a href={`${base}/`}>ホーム</a></li>
+        <li><a href={`${base}/works`}>作品集</a></li>
+        <li><a href={`${base}/about`}>概要</a></li>
+        <li><a href={`${base}/contact`}>お問い合わせ</a></li>
+      </ul>
+      <span class="nav-overlay-label">M-20 FLOWER & COFFEE</span>
+    </div>
 
     <slot />
 
@@ -65,3 +77,33 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     </footer>
   </body>
 </html>
+
+<script>
+  function initNav() {
+    const btn = document.querySelector('.nav-menu-btn') as HTMLButtonElement | null;
+    const overlay = document.querySelector('.nav-overlay') as HTMLElement | null;
+    const closeBtn = document.querySelector('.nav-overlay-close') as HTMLButtonElement | null;
+
+    if (!btn || !overlay || !closeBtn) return;
+
+    const open = () => {
+      overlay.classList.add('is-open');
+      overlay.setAttribute('aria-hidden', 'false');
+      btn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    };
+    const close = () => {
+      overlay.classList.remove('is-open');
+      overlay.setAttribute('aria-hidden', 'true');
+      btn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    };
+
+    btn.addEventListener('click', open);
+    closeBtn.addEventListener('click', close);
+    overlay.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
+  }
+
+  initNav();
+  document.addEventListener('astro:after-swap', initNav);
+</script>

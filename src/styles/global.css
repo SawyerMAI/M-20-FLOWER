@@ -88,6 +88,82 @@ img { display: block; max-width: 100%; }
 .nav-links a:hover,
 .nav-links a[aria-current="page"] { opacity: 0.35; }
 
+/* ── MOBILE NAV ─────────────────────────────────────────────── */
+.nav-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 0;
+  line-height: 1;
+  justify-self: end;
+}
+
+.nav-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3rem 2.5rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.nav-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.nav-overlay-close {
+  position: absolute;
+  top: 1.4rem;
+  right: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-family: var(--font-mono);
+}
+
+.nav-overlay-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.nav-overlay-links a {
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 12vw, 5rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  text-transform: uppercase;
+  transition: opacity 0.2s;
+}
+.nav-overlay-links a:hover { opacity: 0.3; }
+
+.nav-overlay-label {
+  position: absolute;
+  bottom: 2rem;
+  left: 2.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #999;
+}
+
+@media (max-width: 640px) {
+  .nav-tagline,
+  .nav-links { display: none; }
+  .nav-menu-btn { display: block; }
+  .site-nav { grid-template-columns: 1fr auto; }
+}
+
 /* ── HERO (screenshot 1) ────────────────────────────────────── */
 .hero {
   position: relative;
