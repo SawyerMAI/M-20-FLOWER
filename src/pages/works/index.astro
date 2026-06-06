@@ -6,6 +6,7 @@ const works = await getCollection('floral-works');
 const sorted = works.sort((a, b) => a.data.number.localeCompare(b.data.number));
 
 const phClasses = ['ph-1','ph-2','ph-3','ph-4','ph-5','ph-6'];
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <Layout title="作品集 — MAISON">
@@ -32,10 +33,10 @@ const phClasses = ['ph-1','ph-2','ph-3','ph-4','ph-5','ph-6'];
     <div class="filmstrip" id="filmstrip">
       {
         sorted.map((work, i) => (
-          <a href={`/works/${work.slug}`} class="filmstrip-item">
+          <a href={`${base}/works/${work.slug}`} class="filmstrip-item">
             {work.data.coverImage ? (
               <img
-                src={work.data.coverImage}
+                src={`${base}${work.data.coverImage}`}
                 alt={work.data.title}
                 loading={i < 3 ? 'eager' : 'lazy'}
               />
@@ -68,9 +69,9 @@ const phClasses = ['ph-1','ph-2','ph-3','ph-4','ph-5','ph-6'];
     <div class="works-list">
       {
         sorted.map((work, i) => (
-          <a href={`/works/${work.slug}`} class="work-list-item">
+          <a href={`${base}/works/${work.slug}`} class="work-list-item">
             {work.data.coverImage ? (
-              <img src={work.data.coverImage} alt={work.data.title} loading="lazy" />
+              <img src={`${base}${work.data.coverImage}`} alt={work.data.title} loading="lazy" />
             ) : (
               <div class={`ph ${phClasses[i % phClasses.length]}`} />
             )}
